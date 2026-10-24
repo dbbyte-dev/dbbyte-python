@@ -92,3 +92,69 @@ class _DownloadResultOptional(TypedDict, total=False):
 class DownloadResult(_DownloadResultOptional):
     data: bytes
     content_type: str
+
+
+class Bucket(TypedDict):
+    id: str
+    name: str
+    slug: str
+    region: str
+    replicaCount: int
+    isPublic: bool
+    cdn: bool
+    versioningEnabled: bool
+    fileCount: int
+    size: int
+    isDefault: bool
+    createdAt: str
+    updatedAt: str
+
+
+class BucketListResponse(TypedDict):
+    buckets: List[Bucket]
+
+
+class BucketResponse(TypedDict, total=False):
+    success: bool
+    bucket: Bucket
+
+
+class BucketDeleteResponse(TypedDict):
+    success: bool
+
+
+class PurgeResponse(TypedDict):
+    success: bool
+    purged: int
+    failed: List[str]
+
+
+DataRecord = Dict[str, Any]
+
+
+class DataPage(TypedDict):
+    data: List[DataRecord]
+    next_cursor: Optional[str]
+
+
+class DataRecordResponse(TypedDict):
+    data: DataRecord
+
+
+class AppendTextResponse(TypedDict):
+    success: bool
+    appendedCharacters: int
+
+
+class DataDeleteResponse(TypedDict):
+    success: bool
+
+
+class UploadUrlResponse(TypedDict):
+    """A short-lived direct-upload link. Send a request with `method` to
+    `url`, adding `headers`, with the file bytes as the body."""
+
+    url: str
+    method: str
+    headers: Dict[str, str]
+    expiresIn: int

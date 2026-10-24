@@ -4,7 +4,7 @@ Official DBByte SDK for Python. A thin, typed wrapper over the DBByte v1 REST AP
 
 ## Status
 
-Covers object storage: upload, list, download, delete, versioning, and signed URLs. There is no bucket management, CDN cache control, or analytics API yet - those aren't part of the v1 REST API, so they aren't in the SDK.
+Covers object storage (upload, list, download, delete, versioning, signed URLs, signed upload URLs), bucket management, CDN cache purge, and Serve data APIs. There is no analytics API.
 
 ## Installation
 
@@ -144,3 +144,26 @@ except DBByteError as e:
 ## License
 
 MIT
+
+## Buckets, cache purge, upload links, and data APIs
+
+```python
+db.buckets.list()
+db.buckets.create("Media", "us-east", is_public=True)
+db.buckets.update("media", versioning_enabled=True)
+db.buckets.delete("media")
+
+# Needs a write-permission API key.
+db.cdn.purge("media", scope="file", path="logo.png")
+db.cdn.purge("media", scope="bucket")
+
+# Direct browser uploads without exposing your API key.
+link = db.objects.upload_url("media", "photo.jpg", content_type="image/jpeg", size=2_000_000)
+
+# Serve data APIs
+db.data.get("people", limit=20, filters={"city": "Oslo"})
+db.data.create("people", {"name": "Ada"})
+db.data.update("people", "record-id", {"name": "Ada L."})
+db.data.append_text("notes", "New line")
+db.data.delete("people", "record-id")
+```
