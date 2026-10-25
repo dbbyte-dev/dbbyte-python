@@ -10,6 +10,7 @@ from .types import (
     ListVersionsResponse,
     SignedUrlResponse,
     UploadedObject,
+    UploadUrlResponse,
 )
 from .utils import encode_key
 
@@ -33,6 +34,32 @@ class ObjectsResource:
             file_bytes=body,
             content_type=content_type,
             query={"overwrite": "true" if overwrite else None},
+        )
+        return result  # type: ignore[no-any-return]
+
+    def upload_url(
+        self,
+        bucket: str,
+        name: str,
+        content_type: Optional[str] = None,
+        size: Optional[int] = None,
+        overwrite: bool = False,
+        expires_in: Optional[int] = None,
+    ) -> UploadUrlResponse:
+        """Create a short-lived signed upload link so a browser can upload
+        straight to storage without seeing your API key. `name` is flat
+        (no slashes); `size` is the maximum bytes accepted (up to 50 MB)."""
+        body: Dict[str, Any] = {"name": name}
+        if content_type is not None:
+            body["contentType"] = content_type
+        if size is not None:
+            body["size"] = size
+        if overwrite:
+            body["overwrite"] = True
+        if expires_in is not None:
+            body["expiresIn"] = expires_in
+        result = self._client.request_json(
+            "POST", f"/storage/{bucket}/upload-url", body=body
         )
         return result  # type: ignore[no-any-return]
 
